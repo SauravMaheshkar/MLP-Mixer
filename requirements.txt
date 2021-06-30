@@ -1,0 +1,9 @@
+flake8
+git+https://github.com/google/flax.git
+isort
+jax>=0.2.6
+jaxlib
+mypy
+pre-commit
+pytest
+yapf==0.30.0
