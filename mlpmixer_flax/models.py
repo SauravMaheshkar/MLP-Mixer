@@ -39,7 +39,7 @@ class MixerBlock(nn.Module):
 
     Attributes:
         tokens_mlp_dim: No of dimensions for the MLP Block 1
-        channels_mlp_dim: No of dimensions for the MLP Block 1
+        channels_mlp_dim: No of dimensions for the MLP Block 2
         approximate: If True, uses the approximate formulation of GELU in each MLP Block
         dtype: the dtype of the computation (default: float32)
     """
@@ -88,7 +88,7 @@ class MlpMixer(nn.Module):
         num_blocks: No of Blocks of Mixers to use
         hidden_dim: No of Hidden Dimension for the Patch-Wise Convolution Layer
         tokens_mlp_dim: No of dimensions for the MLP Block 1
-        channels_mlp_dim: No of dimensions for the MLP Block 1
+        channels_mlp_dim: No of dimensions for the MLP Block 2
         approximate: If True, uses the approximate formulation of GELU in each MLP Block
         dtype: the dtype of the computation (default: float32)
     """
