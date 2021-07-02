@@ -43,29 +43,29 @@ def get_datasets(config):
 def get_data_from_tfds(*, config, mode):
     """Returns dataset as read from tfds dataset `config.dataset`."""
 
-    data_builder = tfds.builder(config.dataset, data_dir=config.tfds_data_dir)
+    data_builder = tfds.builder(config["dataset"], data_dir=config["tfds_data_dir"])
 
     data_builder.download_and_prepare(
-        download_config=tfds.download.DownloadConfig(manual_dir=config.tfds_manual_dir)
+        download_config=tfds.download.DownloadConfig(manual_dir=config["tfds_manual_dir"])
     )
     data = data_builder.as_dataset(
-        split=config.pp[mode],
+        split=config["pp"]['mode'],
         # Reduces memory footprint in shuffle buffer.
         decoders={"image": tfds.decode.SkipDecoding()},
         shuffle_files=mode == "train",
     )
     image_decoder = data_builder.info.features["image"].decode_example
 
-    dataset_info = get_dataset_info(config.dataset, config.pp[mode])
+    dataset_info = get_dataset_info(config["dataset"], config["pp"]['mode'])
     return get_data(
         data=data,
         mode=mode,
         num_classes=dataset_info["num_classes"],
         image_decoder=image_decoder,
         repeats=None if mode == "train" else 1,
-        batch_size=config.batch_eval if mode == "test" else config.batch,
-        image_size=config.pp["crop"],
-        shuffle_buffer=min(dataset_info["num_examples"], config.shuffle_buffer),
+        batch_size=config.batch_eval if mode == "test" else config["batch"],
+        image_size=config["pp"]['crop'],
+        shuffle_buffer=min(dataset_info["num_examples"], config["shuffle_buffer"]),
     )
 
 
