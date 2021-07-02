@@ -1,6 +1,4 @@
 # Ported from: https://github.com/google-research/vision_transformer/blob/master/vit_jax/input_pipeline.py
-import glob
-import os
 import sys
 
 import flax
@@ -8,7 +6,6 @@ import jax
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from absl import logging
 
 if sys.platform != "darwin":
     # A workaround to avoid crash because tfds may open to many files.
@@ -21,7 +18,7 @@ if sys.platform != "darwin":
 MAX_IN_MEMORY = 200_000
 
 
-def get_tfds_info(dataset, split):
+def get_dataset_info(dataset, split):
     """Returns information about tfds dataset -- see `get_dataset_info()`."""
     data_builder = tfds.builder(dataset)
     return dict(
@@ -32,126 +29,35 @@ def get_tfds_info(dataset, split):
     )
 
 
-def get_directory_info(directory):
-    """Returns information about directory dataset -- see `get_dataset_info()`."""
-    examples_glob = f"{directory}/*/*.jpg"
-    paths = glob.glob(examples_glob)
-    get_classname = lambda path: path.split("/")[-2]
-    class_names = sorted(set(map(get_classname, paths)))
-    return dict(
-        num_examples=len(paths),
-        num_classes=len(class_names),
-        int2str=lambda id_: class_names[id_],
-        examples_glob=examples_glob,
-    )
-
-
-def get_dataset_info(dataset, split):
-    """Returns information about a dataset.
-
-    Args:
-        dataset: Name of tfds dataset or directory -- see `./configs/common.py`
-        split: Which split to return data for (e.g. "test", or "train"; tfds also
-        supports splits like "test[:90%]").
-    Returns:
-        A dictionary with the following keys:
-        - num_examples: Number of examples in dataset/mode.
-        - num_classes: Number of classes in dataset.
-        - int2str: Function converting class id to class name.
-        - examples_glob: Glob to select all files, or None (for tfds dataset).
-    """
-    directory = os.path.join(dataset, split)
-    if os.path.isdir(directory):
-        return get_directory_info(directory)
-    return get_tfds_info(dataset, split)
-
-
-def get_datasets(config):
-    """Returns `ds_train, ds_test` for specified `config`."""
-
-    if os.path.isdir(config.dataset):
-        train_dir = os.path.join(config.dataset, "train")
-        test_dir = os.path.join(config.dataset, "test")
-        if not os.path.isdir(train_dir):
-            raise ValueError(
-                'Expected to find directories"{}" and "{}"'.format(
-                    train_dir,
-                    test_dir,
-                )
-            )
-        logging.info(
-            'Reading dataset from directories "%s" and "%s"', train_dir, test_dir
-        )
-        ds_train = get_data_from_directory(
-            config=config, directory=train_dir, mode="train"
-        )
-        ds_test = get_data_from_directory(
-            config=config, directory=test_dir, mode="test"
-        )
-    else:
-        logging.info('Reading dataset from tfds "%s"', config.dataset)
-        ds_train = get_data_from_tfds(config=config, mode="train")
-        ds_test = get_data_from_tfds(config=config, mode="test")
-
-    return ds_train, ds_test
-
-
-def get_data_from_directory(*, config, directory, mode):
-    """Returns dataset as read from specified `directory`."""
-
-    dataset_info = get_directory_info(directory)
-    data = tf.data.Dataset.list_files(dataset_info["examples_glob"])
-    class_names = [
-        dataset_info["int2str"](id_) for id_ in range(dataset_info["num_classes"])
-    ]
-
-    def _pp(path):
-        return dict(
-            image=path,
-            label=tf.where(tf.strings.split(path, "/")[-2] == class_names)[0][0],
-        )
-
-    image_decoder = lambda path: tf.image.decode_jpeg(tf.io.read_file(path), 3)
-
-    return get_data(
-        data=data,
-        mode=mode,
-        num_classes=dataset_info["num_classes"],
-        image_decoder=image_decoder,
-        repeats=None if mode == "train" else 1,
-        batch_size=config.batch_eval if mode == "test" else config.batch,
-        image_size=config.pp["crop"],
-        shuffle_buffer=min(dataset_info["num_examples"], config.shuffle_buffer),
-        preprocess=_pp,
-    )
-
-
 def get_data_from_tfds(*, config, mode):
     """Returns dataset as read from tfds dataset `config.dataset`."""
 
-    data_builder = tfds.builder(config.dataset, data_dir=config.tfds_data_dir)
+    data_builder = tfds.builder(config["dataset"], data_dir=config["tfds_data_dir"])
 
     data_builder.download_and_prepare(
-        download_config=tfds.download.DownloadConfig(manual_dir=config.tfds_manual_dir)
+        download_config=tfds.download.DownloadConfig(
+            manual_dir=config["tfds_manual_dir"]
+        )
     )
+
     data = data_builder.as_dataset(
-        split=config.pp[mode],
+        split=config["cifar10"]["pp"][mode],
         # Reduces memory footprint in shuffle buffer.
         decoders={"image": tfds.decode.SkipDecoding()},
-        shuffle_files=mode == "train",
+        shuffle_files=mode,
     )
     image_decoder = data_builder.info.features["image"].decode_example
 
-    dataset_info = get_tfds_info(config.dataset, config.pp[mode])
+    dataset_info = get_dataset_info(config["dataset"], config["cifar10"]["pp"][mode])
     return get_data(
         data=data,
         mode=mode,
         num_classes=dataset_info["num_classes"],
         image_decoder=image_decoder,
         repeats=None if mode == "train" else 1,
-        batch_size=config.batch_eval if mode == "test" else config.batch,
-        image_size=config.pp["crop"],
-        shuffle_buffer=min(dataset_info["num_examples"], config.shuffle_buffer),
+        batch_size=config["batch_eval"] if mode == "test" else config["batch"],
+        image_size=config["pp"]["crop"],
+        shuffle_buffer=min(dataset_info["num_examples"], config["shuffle_buffer"]),
     )
 
 

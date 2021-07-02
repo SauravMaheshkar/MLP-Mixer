@@ -7,3 +7,5 @@ mypy
 pre-commit
 pytest
 yapf==0.30.0
+tensorflow>=2.4.0
+tensorflow-datasets>=4.0.1
