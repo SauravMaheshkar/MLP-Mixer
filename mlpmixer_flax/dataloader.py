@@ -6,7 +6,6 @@ import jax
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from absl import logging
 
 if sys.platform != "darwin":
     # A workaround to avoid crash because tfds may open to many files.
@@ -28,16 +27,6 @@ def get_dataset_info(dataset, split):
         int2str=data_builder.info.features["label"].int2str,
         examples_glob=None,
     )
-
-
-def get_datasets(config):
-    """Returns `ds_train, ds_test` for specified `config`."""
-
-    logging.info('Reading dataset from tfds "%s"', config.dataset)
-    ds_train = get_data_from_tfds(config=config, mode="train")
-    ds_test = get_data_from_tfds(config=config, mode="test")
-
-    return ds_train, ds_test
 
 
 def get_data_from_tfds(*, config, mode):
