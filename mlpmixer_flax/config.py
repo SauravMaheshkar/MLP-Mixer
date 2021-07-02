@@ -6,6 +6,7 @@ configuration = {
     "pretrained_dir": ".",
     "tfds_data_dir": None,
     "total_steps": None,
+    "tfds_manual_dir": None,
     "grad_norm_clip": 1.0,
     "optim_dtype": "float32",  # "bfloat16" or "float32"
     "accum_steps": 8,
