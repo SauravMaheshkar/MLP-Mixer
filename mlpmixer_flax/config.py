@@ -25,10 +25,6 @@ configuration = {
         "total_steps": 10000,
         "pp": {"train": "train[:98%]", "test": "test", "crop": 384},
     },
-    "cifar100": {
-        "total_steps": 10000,
-        "pp": {"train": "train[:98%]", "test": "test", "crop": 384},
-    },
 }
 
 mixer_b16_config = {

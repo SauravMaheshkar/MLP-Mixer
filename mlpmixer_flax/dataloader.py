@@ -52,14 +52,14 @@ def get_data_from_tfds(*, config, mode):
     )
 
     data = data_builder.as_dataset(
-        split=config["dataset"]["pp"][mode],
+        split=config["cifar10"]["pp"][mode],
         # Reduces memory footprint in shuffle buffer.
         decoders={"image": tfds.decode.SkipDecoding()},
-        shuffle_files=mode == "train",
+        shuffle_files=mode,
     )
     image_decoder = data_builder.info.features["image"].decode_example
 
-    dataset_info = get_dataset_info(config["dataset"], config["dataset"]["pp"][mode])
+    dataset_info = get_dataset_info(config["dataset"], config["cifar10"]["pp"][mode])
     return get_data(
         data=data,
         mode=mode,
