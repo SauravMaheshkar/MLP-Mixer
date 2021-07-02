@@ -1,6 +1,4 @@
-__all__ = ["configuration", "with_dataset", "mixer_b16_config"]
-
-from typing import Dict
+__all__ = ["configuration", "mixer_b16_config"]
 
 configuration = {
     "pretrained_dir": ".",
@@ -23,22 +21,14 @@ configuration = {
     "trainer": "train",  # "train" or "inference_time"
     "model": None,
     "dataset": None,
-    "pp": None,
-}
-
-DATASET_PRESETS = {
-    "cifar10": dict(
-        {
-            "total_steps": 10000,
-            "pp": dict({"train": "train[:98%]", "test": "test", "crop": 384}),
-        }
-    ),
-    "cifar100": dict(
-        {
-            "total_steps": 10000,
-            "pp": dict({"train": "train[:98%]", "test": "test", "crop": 384}),
-        }
-    ),
+    "cifar10": {
+        "total_steps": 10000,
+        "pp": {"train": "train[:98%]", "test": "test", "crop": 384},
+    },
+    "cifar100": {
+        "total_steps": 10000,
+        "pp": {"train": "train[:98%]", "test": "test", "crop": 384},
+    },
 }
 
 mixer_b16_config = {
@@ -49,9 +39,3 @@ mixer_b16_config = {
     "tokens_mlp_dim": 384,
     "channels_mlp_dim": 3072,
 }
-
-
-def with_dataset(config: Dict, dataset: str) -> Dict:
-    config.update(dataset=dataset)
-    config.update(DATASET_PRESETS[dataset])
-    return config
