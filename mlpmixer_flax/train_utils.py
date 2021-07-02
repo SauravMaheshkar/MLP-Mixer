@@ -1,4 +1,4 @@
-# https://github.com/google-research/vision_transformer/blob/master/vit_jax/utils.py
+# From https://github.com/google-research/vision_transformer/blob/master/vit_jax/utils.py
 import flax
 import jax
 import jax.numpy as jnp

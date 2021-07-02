@@ -1,3 +1,4 @@
+# From https://github.com/google-research/vision_transformer/blob/master/vit_jax/train.py
 import jax
 import jax.numpy as jnp
 
