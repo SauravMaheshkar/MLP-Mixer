@@ -48,8 +48,9 @@ def get_data_from_tfds(*, config, mode):
     data_builder.download_and_prepare(
         download_config=tfds.download.DownloadConfig(manual_dir=config["tfds_manual_dir"])
     )
+
     data = data_builder.as_dataset(
-        split=config["pp"]['mode'],
+        split=config["pp"][mode],
         # Reduces memory footprint in shuffle buffer.
         decoders={"image": tfds.decode.SkipDecoding()},
         shuffle_files=mode == "train",
