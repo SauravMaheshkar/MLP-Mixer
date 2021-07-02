@@ -108,8 +108,8 @@ class MlpMixer(nn.Module):
         # Per-Patch Fully Connected Layer
         x = nn.Conv(
             features=self.hidden_dim,
-            kernel_size=self.patches.size,
-            strides=self.patches.size,
+            kernel_size=self.patches["size"],
+            strides=self.patches["size"],
             dtype=self.dtype,
             name="stem",
         )(inputs)
