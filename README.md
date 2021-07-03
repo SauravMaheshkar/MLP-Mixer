@@ -37,23 +37,23 @@ model = MlpMixer(num_classes=num_classes, **mixer_b16_config)
 ### 1. Conda Approach
 
 ```sh
-conda env create --name <env-name> sauravmaheshkar/gmlp
+conda env create --name <env-name> sauravmaheshkar/mlpmixer
 conda activate <env-name>
 ```
 
 ### 2. Docker Approach
 
 ```sh
-docker pull ghcr.io/sauravmaheshkar/gmlp-dev:latest
-docker run -it -d --name <container_name> ghcr.io/sauravmaheshkar/gmlp-dev
+docker pull ghcr.io/sauravmaheshkar/mlpmixer-dev:latest
+docker run -it -d --name <container_name> ghcr.io/sauravmaheshkar/mlpmixer-dev
 ```
 
 Use the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) Extension in VSCode and [attach to the running container](https://code.visualstudio.com/docs/remote/attach-container). The code resides in the `code/` dir.
 
-Alternatively you can also download the image from [Docker Hub](https://hub.docker.com/r/sauravmaheshkar/gmlp-dev).
+Alternatively you can also download the image from [Docker Hub](https://hub.docker.com/r/sauravmaheshkar/mlpmixer-dev).
 
 ```sh
-docker pull sauravmaheshkar/gmlp-dev
+docker pull sauravmaheshkar/mlpmixer-dev
 ```
 
 ## Citations
