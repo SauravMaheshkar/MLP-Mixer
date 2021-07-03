@@ -32,6 +32,8 @@ num_classes = get_dataset_info(dataset, "train")["num_classes"]
 model = MlpMixer(num_classes=num_classes, **mixer_b16_config)
 ```
 
+The easiest way to get started would be to try out the [FineTuning Example Notebook](https://github.com/SauravMaheshkar/MLP-Mixer/blob/main/examples/FineTuning_Example.ipynb).
+
 ## Development
 
 ### 1. Conda Approach
